@@ -432,7 +432,7 @@
     for (const line of lines) {
       const match = line.match(/^\s*([-*]|\d+\.)\s+(.+)$/);
       if (match) {
-        const type = /^\\d+\\./.test(match[1]) ? "ol" : "ul";
+        const type = /^\d+\\./.test(match[1]) ? "ol" : "ul";
         if (!inList || listType !== type) {
           if (inList) output.push("</" + listType + ">");
           output.push("<" + type + ">");
