@@ -418,19 +418,19 @@
     text = text.replace(/^### (.+)$/gm, "<h3>$1</h3>")
       .replace(/^## (.+)$/gm, "<h2>$1</h2>")
       .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-      .replace(/\\*\\*(.+?)\\*\\*/gs, "<strong>$1</strong>")
+      .replace(/\*\*(.+?)\*\*/gs, "<strong>$1</strong>")
       .replace(/__([^_]+)__/g, "<strong>$1</strong>")
       .replace(new RegExp("\\x60([^\\x60\\n]+)\\x60", "g"), "<code>$1</code>")
-      .replace(/\\[([^\\]]+)\\]\\((https?:\\/\\/[^\\s)]+)\\)/g,
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
         '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
-    const lines = text.split("\\n");
+    const lines = text.split("\n");
     const output = [];
     let inList = false;
     let listType = "";
 
     for (const line of lines) {
-      const match = line.match(/^\\s*([-*]|\\d+\\.)\\s+(.+)$/);
+      const match = line.match(/^\s*([-*]|\d+\.)\s+(.+)$/);
       if (match) {
         const type = /^\\d+\\./.test(match[1]) ? "ol" : "ul";
         if (!inList || listType !== type) {
