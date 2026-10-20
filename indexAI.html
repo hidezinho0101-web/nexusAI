@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101116">
+  <title>Nexus AI</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101116;
+      --panel: #171920;
+      --panel2: #20232c;
+      --text: #f3f4f8;
+      --muted: #a2a6b5;
+      --border: #303440;
+      --accent: #9b8cff;
+      --user: #292642;
+    }
+    body.light {
+      color-scheme: light;
+      --bg: #f5f6fb;
+      --panel: #ffffff;
+      --panel2: #eceef6;
+      --text: #20212b;
+      --muted: #686b7a;
+      --border: #dfe1eb;
+      --accent: #6651db;
+      --user: #e9e5ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.55 system-ui, sans-serif;
+      min-height: 100vh;
+    }
+    button, textarea { font: inherit; }
+    button {
+      cursor: pointer;
+      color: var(--text);
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      border-radius: 12px;
+      padding: 10px 13px;
+    }
+    button:hover { border-color: var(--accent); }
+    .app { min-height: 100vh; display: flex; flex-direction: column; }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .logo {
+      width: 38px; height: 38px; display: grid; place-items: center;
+      border-radius: 13px; background: var(--accent); color: white;
+      font-weight: 800; font-size: 20px;
+    }
+    h1 { font-size: 17px; margin: 0; }
+    .subtitle { color: var(--muted); font-size: 12px; }
+    .actions { display: flex; gap: 8px; }
+    main {
+      width: 100%; max-width: 850px; margin: 0 auto;
+      padding: 28px 18px 160px; flex: 1;
+    }
+    #welcome { text-align: center; padding: 9vh 0 30px; }
+    #welcome .big { font-size: clamp(32px, 6vw, 48px); margin: 0 0 8px; }
+    #welcome p { color: var(--muted); }
+    .suggestions {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 9px; margin-top: 24px;
+    }
+    .suggestions button { background: var(--panel); }
+    #messages { display: flex; flex-direction: column; gap: 18px; }
+    .message { display: flex; flex-direction: column; gap: 5px; }
+    .message.user { align-items: flex-end; }
+    .who { color: var(--muted); font-size: 12px; }
+    .bubble {
+      max-width: 90%; white-space: pre-wrap; overflow-wrap: anywhere;
+      padding: 13px 16px; border: 1px solid var(--border);
+      border-radius: 16px; background: var(--panel);
+    }
+    .user .bubble { background: var(--user); }
+    .notice {
+      border: 1px solid var(--border); color: var(--muted);
+      background: var(--panel); padding: 12px 14px;
+      border-radius: 12px; font-size: 13px; margin-top: 24px;
+    }
+    .composer-wrap {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 16px 18px max(16px, env(safe-area-inset-bottom));
+      background: linear-gradient(transparent, var(--bg) 20%);
+    }
+    .composer {
+      max-width: 850px; margin: auto; padding: 10px;
+      display: flex; align-items: flex-end; gap: 10px;
+      border: 1px solid var(--border); border-radius: 18px;
+      background: var(--panel);
+      box-shadow: 0 8px 30px #0002;
+    }
+    textarea {
+      flex: 1; min-width: 0; resize: none; max-height: 150px;
+      border: 0; outline: 0; background: transparent;
+      color: var(--text); padding: 10px; line-height: 1.5;
+    }
+    #send { background: var(--accent); color: white; border: 0; font-weight: 700; }
+    .footer-note { max-width: 850px; margin: 7px auto 0; text-align: center;
+      color: var(--muted); font-size: 11px; }
+    @media (max-width: 520px) {
+      header { padding: 12px; }
+      .actions { gap: 5px; }
+      .actions button { padding: 9px; font-size: 12px; }
+      main { padding-inline: 12px; }
+      .bubble { max-width: 96%; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo">N</div>
+      <div>
+        <h1>Nexus AI</h1>
+        <div class="subtitle">Seu espaço de ideias</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="newChat" title="Nova conversa">＋ Nova</button>
+      <button id="theme" title="Mudar tema">☼ Tema</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="welcome">
+      <h2 class="big">Olá! Eu sou o Nexus.</h2>
+      <p>O começo do seu próprio assistente de IA.</p>
+      <div class="suggestions">
+        <button data-prompt="Me ajude a criar um projeto.">Criar um projeto</button>
+        <button data-prompt="Explique um assunto de forma simples.">Aprender algo</button>
+        <button data-prompt="Me ajude a escrever um texto.">Escrever um texto</button>
+      </div>
+      <div class="notice">
+        Versão inicial: a interface e o histórico local funcionam.
+        A inteligência artificial será conectada na próxima etapa.
+      </div>
+    </section>
+    <section id="messages" aria-live="polite"></section>
+  </main>
+
+  <div class="composer-wrap">
+    <form id="form" class="composer">
+      <textarea id="input" rows="1" maxlength="4000"
+        placeholder="Escreva sua mensagem..." aria-label="Sua mensagem"></textarea>
+      <button id="send" type="submit">Enviar</button>
+    </form>
+    <div class="footer-note">
+      O histórico fica neste navegador. Evite guardar informações secretas.
+    </div>
+  </div>
+</div>
+
+<script>
+  const $ = (selector) => document.querySelector(selector);
+  const messagesEl = $("#messages");
+  const welcome = $("#welcome");
+  const input = $("#input");
+  const STORAGE_KEY = "nexus-ai-chats-v1";
+  const THEME_KEY = "nexus-ai-theme-v1";
+
+  let chats = loadChats();
+  let currentId = chats.length ? chats[chats.length - 1].id : makeId();
+
+  function makeId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function loadChats() {
+    try {
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      return Array.isArray(data) ? data : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function currentChat() {
+    let chat = chats.find(item => item.id === currentId);
+    if (!chat) {
+      chat = { id: currentId, title: "Nova conversa", messages: [] };
+      chats.push(chat);
+    }
+    return chat;
+  }
+
+  function saveChats() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
+    } catch {
+      alert("Não foi possível salvar. O armazenamento do navegador pode estar cheio.");
+    }
+  }
+
+  function addMessage(role, content) {
+    const chat = currentChat();
+    chat.messages.push({ role, content, time: new Date().toISOString() });
+    if (chat.messages.length === 1) {
+      chat.title = content.slice(0, 42);
+    }
+    saveChats();
+    render();
+  }
+
+  function render() {
+    const chat = currentChat();
+    messagesEl.replaceChildren();
+    welcome.hidden = chat.messages.length > 0;
+
+    chat.messages.forEach(message => {
+      const article = document.createElement("article");
+      article.className = "message " + (message.role === "user" ? "user" : "assistant");
+
+      const who = document.createElement("div");
+      who.className = "who";
+      who.textContent = message.role === "user" ? "Você" : "Nexus AI";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = message.content;
+
+      article.append(who, bubble);
+      messagesEl.append(article);
+    });
+  }
+
+  function newChat() {
+    currentId = makeId();
+    chats.push({ id: currentId, title: "Nova conversa", messages: [] });
+    saveChats();
+    render();
+    input.focus();
+  }
+
+  $("#form").addEventListener("submit", event => {
+    event.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage("user", text);
+    input.value = "";
+    input.style.height = "auto";
+
+    addMessage(
+      "assistant",
+      "A interface recebeu sua mensagem, mas a IA ainda não foi conectada. " +
+      "Na próxima etapa vamos ligar o Nexus a um modelo real."
+    );
+  });
+
+  input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 150) + "px";
+  });
+
+  input.addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      $("#form").requestSubmit();
+    }
+  });
+
+  $("#newChat").addEventListener("click", newChat);
+
+  $("#theme").addEventListener("click", () => {
+    document.body.classList.toggle("light");
+    localStorage.setItem(
+      THEME_KEY,
+      document.body.classList.contains("light") ? "light" : "dark"
+    );
+  });
+
+  document.querySelectorAll("[data-prompt]").forEach(button => {
+    button.addEventListener("click", () => {
+      input.value = button.dataset.prompt;
+      input.focus();
+    });
+  });
+
+  // Exporta a conversa atual como arquivo de texto.
+  const exportButton = document.createElement("button");
+  exportButton.textContent = "↓ Exportar";
+  exportButton.title = "Baixar conversa em TXT";
+  exportButton.addEventListener("click", () => {
+    const chat = currentChat();
+    const content = chat.messages.map(m =>
+      (m.role === "user" ? "Você" : "Nexus AI") + ":\n" + m.content
+    ).join("\n\n");
+
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "nexus-conversa.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+  $(".actions").append(exportButton);
+
+  if (localStorage.getItem(THEME_KEY) === "light") {
+    document.body.classList.add("light");
+  }
+
+  render();
+</script>
+</body>
+</html>
